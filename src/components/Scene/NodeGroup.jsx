@@ -1,50 +1,8 @@
-// NodeGroup.jsx
 import { useState, useRef, useEffect } from 'react';
 import { Html } from '@react-three/drei';
-import * as THREE from 'three';
-import { useSearchStore } from '../../stores/searchStore';
 import { useNodePositionsStore } from '../../stores/nodePositionsStore';
-
-const Node = ({ position, label, color, isSelected }) => {
-  const [hovered, setHovered] = useState(false);
-
-  return (
-    <group position={position}>
-      {isSelected && (
-        <mesh>
-          <circleGeometry args={[0.15, 32]} />
-          <meshBasicMaterial color={color} transparent opacity={0.2} />
-        </mesh>
-      )}
-      <mesh
-        onPointerOver={() => setHovered(true)}
-        onPointerOut={() => setHovered(false)}
-      >
-        <planeGeometry args={[0.06, 0.06]} />
-        <meshBasicMaterial
-          color={color}
-          transparent
-          opacity={isSelected ? 1 : hovered ? 0.9 : 0.7}
-          depthWrite={false}
-          depthTest={true}
-        />
-      </mesh>
-      <Html position={[0, 0.2, 0]} center transform>
-        <div
-          className={`px-1.5 py-0.5 text-[10px] text-white bg-black/60 rounded-sm whitespace-nowrap transition-all duration-300 ${
-            isSelected ? 'scale-110' : ''
-          }`}
-          style={{
-            textShadow: '0 1px 2px rgba(0,0,0,0.5)',
-            transform: `scale(${isSelected ? 0.9 : 0.8})`,
-          }}
-        >
-          {label}
-        </div>
-      </Html>
-    </group>
-  );
-};
+import Node from './Node';
+import Connection from './Connection';
 
 const GroupLabel = ({ label }) => (
   <Html position={[0, 0, -1]} center>
@@ -53,52 +11,6 @@ const GroupLabel = ({ label }) => (
     </div>
   </Html>
 );
-
-const Connection = ({ start, end, startColor, endColor }) => {
-  const points = [new THREE.Vector3(...start), new THREE.Vector3(...end)];
-  const lineGeometry = new THREE.BufferGeometry().setFromPoints(points);
-
-  return (
-    <group>
-      <line geometry={lineGeometry}>
-        <lineBasicMaterial 
-          color="#ffffff" 
-          transparent 
-          opacity={0.2} 
-          linewidth={1}
-          depthWrite={false}
-        />
-      </line>
-
-      <line geometry={lineGeometry}>
-        <lineBasicMaterial 
-          color="#4dffff" 
-          transparent 
-          opacity={0.1} 
-          linewidth={1.5}
-        />
-      </line>
-
-      <mesh position={start}>
-        <sphereGeometry args={[0.05, 16, 16]} />
-        <meshBasicMaterial 
-          color={startColor} 
-          transparent 
-          opacity={0.7}
-        />
-      </mesh>
-
-      <mesh position={end}>
-        <sphereGeometry args={[0.05, 16, 16]} />
-        <meshBasicMaterial 
-          color={endColor} 
-          transparent 
-          opacity={0.7}
-        />
-      </mesh>
-    </group>
-  );
-};
 
 export default function NodeGroup({ data, position }) {
   const groupRef = useRef();

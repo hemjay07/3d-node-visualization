@@ -1,20 +1,26 @@
-// components/Scene/InterGroupConnection.jsx
-import * as THREE from 'three';
+import { useNodePositionsStore } from '../../stores/nodePositionsStore'
+import * as THREE from 'three'
 
-export function InterGroupConnection({ sourceGroup, targetGroup, sourceNodeId, targetNodeId }) {
+
+export default function InterGroupConnection ({ sourceGroup, targetGroup, sourceNodeId, targetNodeId }) {
+  const animatedPositions = useNodePositionsStore(state => state.animatedPositions);
+  
   const sourceNode = sourceGroup.nodes.find(n => n.id === sourceNodeId);
   const targetNode = targetGroup.nodes.find(n => n.id === targetNodeId);
 
   if (!sourceNode || !targetNode) return null;
 
-  // Calculate world positions
-  const sourcePos = [
+  // Get animated positions from store, fall back to static positions if not available
+  const sourceAnimatedPos = animatedPositions.get(`${sourceGroup.id}-${sourceNodeId}`);
+  const targetAnimatedPos = animatedPositions.get(`${targetGroup.id}-${targetNodeId}`);
+
+  const sourcePos = sourceAnimatedPos || [
     sourceGroup.position[0] + sourceNode.position[0],
     sourceGroup.position[1] + sourceNode.position[1],
     sourceGroup.position[2] + sourceNode.position[2]
   ];
   
-  const targetPos = [
+  const targetPos = targetAnimatedPos || [
     targetGroup.position[0] + targetNode.position[0],
     targetGroup.position[1] + targetNode.position[1],
     targetGroup.position[2] + targetNode.position[2]
@@ -26,7 +32,7 @@ export function InterGroupConnection({ sourceGroup, targetGroup, sourceNodeId, t
   ];
 
   const lineGeometry = new THREE.BufferGeometry().setFromPoints(points);
-
+ 
   return (
     <group>
       {/* Very faint base line */}
@@ -36,6 +42,7 @@ export function InterGroupConnection({ sourceGroup, targetGroup, sourceNodeId, t
           transparent 
           opacity={0.02} 
           linewidth={1}
+          depthWrite={false}
         />
       </line>
 
@@ -46,6 +53,7 @@ export function InterGroupConnection({ sourceGroup, targetGroup, sourceNodeId, t
           transparent 
           opacity={0.01} 
           linewidth={1}
+          depthWrite={false}
         />
       </line>
 
@@ -56,6 +64,7 @@ export function InterGroupConnection({ sourceGroup, targetGroup, sourceNodeId, t
           color="#4dffff" 
           transparent 
           opacity={0.05}
+          depthWrite={false}
         />
       </mesh>
 
@@ -65,8 +74,9 @@ export function InterGroupConnection({ sourceGroup, targetGroup, sourceNodeId, t
           color="#4dffff" 
           transparent 
           opacity={0.05}
+          depthWrite={false}
         />
       </mesh>
     </group>
   );
-}
+};
