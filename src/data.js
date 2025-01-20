@@ -186,9 +186,3 @@ function generateBaseNodeGroup(domain, index, position) {
 }
 
 export const UNIVERSE_DATA = generateNodeGroups();
-
-// Log stats
-console.log(`Generated ${UNIVERSE_DATA.nodeGroups.length} node groups`);
-console.log(`Total nodes: ${UNIVERSE_DATA.nodeGroups.reduce((acc, group) => acc + group.nodes.length, 0)}`);
-console.log(`Total internal connections: ${UNIVERSE_DATA.nodeGroups.reduce((acc, group) => acc + group.connections.length, 0)}`);
-console.log(`Total inter-group connections: ${UNIVERSE_DATA.interGroupConnections.length}`);

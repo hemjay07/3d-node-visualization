@@ -1,16 +1,12 @@
-// App.jsx
-import { useState, useRef } from 'react'
 import { Canvas } from '@react-three/fiber'
 import { OrbitControls } from '@react-three/drei'
 import { EffectComposer, Bloom } from '@react-three/postprocessing'
 import Scene from './components/Scene/Index'
 import { Search } from './components/UI/Search'
 import { UNIVERSE_DATA } from './data'
-import * as THREE from 'three';
-
 
 function App() {
-
+  
   return (
     <div className="w-screen h-screen" 
       style={{ 
@@ -24,43 +20,41 @@ function App() {
       <Canvas
  className="w-full h-full"
  camera={{ 
-  position: [50, 50, 200],  // Start further out and offset from center
-  fov: 40,
-  near: 0.1,
-  far: 5000
-}}
+   position: [0, 0, 200],
+   fov: 45,
+   near: 0.1,
+   far: 5000
+ }}
 >
         <Scene />
-        // In App.jsx
-        <OrbitControls 
-    makeDefault  
-    enableDamping
-    dampingFactor={0.05}
-    rotateSpeed={0.5}
-    zoomSpeed={1}
-    panSpeed={1}
-    screenSpacePanning={false}
-    zoomToCursor={false}
-    minDistance={0.1}
-    maxDistance={1000}
-    
-    // Set initial target away from origin
-    target={[50, 50, 0]}  // Offset target to match camera position
-    
-    minPolarAngle={Math.PI * 0.1}
-    maxPolarAngle={Math.PI * 0.85}
-    minAzimuthAngle={-Math.PI * 0.75}
-    maxAzimuthAngle={Math.PI * 0.75}
-    
-    enableRotate={true}
-    enableRotatePolarFix={true}
+<OrbitControls 
+  makeDefault  
+  enableDamping
+  dampingFactor={0.05}
+  rotateSpeed={0.5}
+  zoomSpeed={1}
+  panSpeed={1}
+  screenSpacePanning={true}
+  zoomToCursor={true}
+  minDistance={0.1}
+  maxDistance={1000}
+  
+  // Rotation constraints
+  minPolarAngle={Math.PI * 0.1}     
+  maxPolarAngle={Math.PI * 0.85}    
+  minAzimuthAngle={-Math.PI * 0.75}  
+  maxAzimuthAngle={Math.PI * 0.75}
+  
+  // Additional helpful settings
+  enableRotate={true}
 
-    mouseButtons={{
-      LEFT: THREE.MOUSE.ROTATE,
-      MIDDLE: THREE.MOUSE.PAN,
-      RIGHT: THREE.MOUSE.DOLLY
-    }}
-  />
+  
+  // Auto-rotation when idle 
+  autoRotate={true}
+  autoRotateSpeed={0.2}
+  
+  enableRotatePolarFix={true}
+/>
         <EffectComposer>
           <Bloom 
             intensity={0.7}

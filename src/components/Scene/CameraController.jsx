@@ -39,10 +39,9 @@ export function CameraController() {
 
     const groupSize = new THREE.Vector3().subVectors(bounds.max, bounds.min);
     const maxDimension = Math.max(groupSize.x, groupSize.y, groupSize.z);
-    // const viewOffset = Math.max(maxDimension * 2, 10); // Ensure a minimum offset
+    // const viewOffset = Math.max(maxDimension * 2, 10); // Ensures a minimum offset
 
-    // Define positions
-    const spaceCenter = new THREE.Vector3(0, 0, 70); // Adjust z for perspective
+    const spaceCenter = new THREE.Vector3(0, 0, 70); // Adjusts z for perspective
     const endPos = new THREE.Vector3(
       center.x,
       center.y,
@@ -55,12 +54,12 @@ export function CameraController() {
     const tl = gsap.timeline({
       onStart: () => {
         if (controls) {
-          controls.enabled = false; // Disable controls during animation
+          controls.enabled = false; 
         }
       },
       onComplete: () => {
         if (controls) {
-          controls.enabled = true; // Re-enable controls
+          controls.enabled = true; 
         }
         setIsTransitioning(false);
       },
@@ -100,12 +99,12 @@ export function CameraController() {
       duration: 2,
       ease: "power3.inOut",
       onUpdate: () => controls?.update(),
-    }, 0); // Synchronize with Step 1
+    }, 0); 
 
     return () => {
-      tl.kill(); // Clean up the animation
+      tl.kill();
       if (controls) {
-        controls.enabled = true; // Ensure controls are re-enabled
+        controls.enabled = true; 
       }
     };
   }, [selectedNodeGroup, camera, controls, setIsTransitioning]);
