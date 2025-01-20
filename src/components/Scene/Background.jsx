@@ -10,8 +10,8 @@ export default function Background() {
     
     for (let i = 0; i < particlesCount; i++) {
       // Spread particles more evenly and wider
-      positions[i * 3] = (Math.random() - 0.5) * 200      // x
-      positions[i * 3 + 1] = (Math.random() - 0.5) * 200  // y
+      positions[i * 3] = (Math.random() - 0.5) * 150    // x
+      positions[i * 3 + 1] = (Math.random() - 0.5) * 150  // y
       positions[i * 3 + 2] = (Math.random() - 0.5) * 100  // z
     }
     

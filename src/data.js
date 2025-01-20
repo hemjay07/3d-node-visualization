@@ -41,7 +41,7 @@ function getRandomPosition(range) {
 
 function generateNodeGroups() {
   // First generate all groups
-  const groups = Array.from({ length: 30 }, (_, index) => {
+  const groups = Array.from({ length: 15 }, (_, index) => {
     const domainIndex = index % DOMAINS.length;
     return generateBaseNodeGroup(DOMAINS[domainIndex], index);
   });
@@ -83,12 +83,12 @@ function generateNodeGroups() {
 
 function generateBaseNodeGroup(domain, index) {
   const position = [
-    getRandomPosition(150),
-    getRandomPosition(150),
-    getRandomPosition(300)
+    getRandomPosition(100),  // Reduced from 150
+    getRandomPosition(100),  // Reduced from 150
+    getRandomPosition(200)   // Reduced from 300
   ];
 
-  const nodeCount = Math.floor(Math.random() * 15) + 5;
+  const nodeCount = Math.floor(Math.random() * 10) + 5;
   const radius = Math.max(4, Math.min(12, Math.cbrt(nodeCount)));
   
   const nodes = [];

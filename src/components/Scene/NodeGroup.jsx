@@ -1,7 +1,9 @@
+// NodeGroup.jsx
 import { useState, useRef, useEffect } from 'react';
 import { Html } from '@react-three/drei';
 import * as THREE from 'three';
 import { useSearchStore } from '../../stores/searchStore';
+import { useNodePositionsStore } from '../../stores/nodePositionsStore';
 
 const Node = ({ position, label, color, isSelected }) => {
   const [hovered, setHovered] = useState(false);
@@ -23,6 +25,8 @@ const Node = ({ position, label, color, isSelected }) => {
           color={color}
           transparent
           opacity={isSelected ? 1 : hovered ? 0.9 : 0.7}
+          depthWrite={false}
+          depthTest={true}
         />
       </mesh>
       <Html position={[0, 0.2, 0]} center transform>
@@ -44,7 +48,7 @@ const Node = ({ position, label, color, isSelected }) => {
 
 const GroupLabel = ({ label }) => (
   <Html position={[0, 0, -1]} center>
-    <div className="px-3 py-1 text-sm text-white bg-black/30 rounded-sm whitespace-nowrap">
+    <div className="px-3 py-1 text-sm text-black bg-white/50 rounded-sm whitespace-nowrap">
       {label}
     </div>
   </Html>
@@ -56,17 +60,16 @@ const Connection = ({ start, end, startColor, endColor }) => {
 
   return (
     <group>
-      {/* Main line */}
       <line geometry={lineGeometry}>
         <lineBasicMaterial 
           color="#ffffff" 
           transparent 
           opacity={0.2} 
           linewidth={1}
+          depthWrite={false}
         />
       </line>
 
-      {/* Subtle glow line */}
       <line geometry={lineGeometry}>
         <lineBasicMaterial 
           color="#4dffff" 
@@ -76,7 +79,6 @@ const Connection = ({ start, end, startColor, endColor }) => {
         />
       </line>
 
-      {/* Connection points */}
       <mesh position={start}>
         <sphereGeometry args={[0.05, 16, 16]} />
         <meshBasicMaterial 
@@ -98,9 +100,9 @@ const Connection = ({ start, end, startColor, endColor }) => {
   );
 };
 
-
 export default function NodeGroup({ data, position }) {
   const groupRef = useRef();
+  const updateNodePosition = useNodePositionsStore(state => state.updateNodePosition);
   const [animatedNodes, setAnimatedNodes] = useState(
     data.nodes.map((node) => ({
       ...node,
@@ -111,7 +113,7 @@ export default function NodeGroup({ data, position }) {
 
   useEffect(() => {
     const radius = 6.0;
-    const speed = 0.003;
+    const speed = 0.01;
 
     const interval = setInterval(() => {
       setAnimatedNodes((prevNodes) =>
@@ -119,17 +121,30 @@ export default function NodeGroup({ data, position }) {
           const newAngle = node.angle + speed;
           const newX = node.originalPosition[0] + radius * Math.cos(newAngle);
           const newY = node.originalPosition[1] + radius * Math.sin(newAngle);
+          const newPosition = [newX, newY, node.originalPosition[2]];
+          
+          // Update global position store with world position
+          updateNodePosition(
+            data.id, 
+            node.id, 
+            [
+              position[0] + newX,
+              position[1] + newY,
+              position[2] + node.originalPosition[2]
+            ]
+          );
+          
           return {
             ...node,
             angle: newAngle,
-            position: [newX, newY, node.originalPosition[2]],
+            position: newPosition,
           };
         })
       );
     }, 16);
 
     return () => clearInterval(interval);
-  }, []);
+  }, [data.id, position, updateNodePosition]);
 
   return (
     <group ref={groupRef} position={position}>
@@ -149,6 +164,7 @@ export default function NodeGroup({ data, position }) {
           />
         );
       })}
+      
       {animatedNodes.map((node) => (
         <Node
           key={node.id}

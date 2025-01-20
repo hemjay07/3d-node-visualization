@@ -27,28 +27,48 @@ function App() {
       </div>
       
       <Canvas
-        className="w-full h-full"
-        camera={{ position: [17, -1, 10], fov: 50 }}
-      >
+ className="w-full h-full"
+ camera={{ 
+   position: [0, 0, 200],
+   fov: 45,
+   near: 0.1,
+   far: 5000
+ }}
+>
         <DebugInfo onDebugUpdate={setDebugInfo} />
         <Scene />
-        <OrbitControls 
-          makeDefault  
-          enableDamping
-          dampingFactor={0.05}
-          rotateSpeed={0.5}
-          zoomSpeed={1}
-          panSpeed={0.5}
-          screenSpacePanning={true}
-          zoomToCursor={true}
-          minDistance={-500}
-          maxDistance={3100}
-          // mouseButtons={{
-          //   LEFT: 2,
-          //   MIDDLE: 1,
-          //   RIGHT: 0
-          // }}
-        />
+        // In App.jsx
+<OrbitControls 
+  makeDefault  
+  enableDamping
+  dampingFactor={0.05}
+  rotateSpeed={0.5}
+  zoomSpeed={1}
+  panSpeed={1}
+  screenSpacePanning={true}
+  zoomToCursor={true}
+  minDistance={0.1}
+  maxDistance={1000}
+  
+  // Add rotation constraints
+  minPolarAngle={Math.PI * 0.1}     // Prevent looking directly from below
+  maxPolarAngle={Math.PI * 0.85}    // Prevent looking directly from above
+  
+  // Limit horizontal rotation range
+  minAzimuthAngle={-Math.PI * 0.75}  // Limit left rotation
+  maxAzimuthAngle={Math.PI * 0.75}   // Limit right rotation
+  
+  // Additional helpful settings
+  enableRotate={true}
+
+  
+  // Auto-rotation when idle (optional)
+  // autoRotate={true}
+  // autoRotateSpeed={0.5}
+  
+  // Keep camera level with horizon
+  enableRotatePolarFix={true}
+/>
         <EffectComposer>
           <Bloom 
             intensity={0.7}
