@@ -34,27 +34,68 @@ const COLORS = {
   glow: '#4dffff'       // Cyan glow
 };
 
-
 function getRandomPosition(range) {
   return Math.random() * range - range / 2;
 }
 
+function getRandomPositionWithPadding(existingPositions, minDistance = 50) {
+  let position;
+  let isValidPosition = false;
+  let attempts = 0;
+  const maxAttempts = 100;
+
+  while (!isValidPosition && attempts < maxAttempts) {
+    position = [
+      getRandomPosition(200),   // x range
+      getRandomPosition(200),   // y range
+      getRandomPosition(200)    // z range
+    ];
+
+    isValidPosition = true;
+    for (const existingPos of existingPositions) {
+      const distance = Math.sqrt(
+        Math.pow(position[0] - existingPos[0], 2) +
+        Math.pow(position[1] - existingPos[1], 2) +
+        Math.pow(position[2] - existingPos[2], 2)
+      );
+
+      if (distance < minDistance) {
+        isValidPosition = false;
+        break;
+      }
+    }
+
+    attempts++;
+  }
+
+  if (!isValidPosition) {
+    console.warn('Could not find valid position after max attempts');
+  }
+
+  return position;
+}
+
 function generateNodeGroups() {
-  // First generate all groups
-  const groups = Array.from({ length: 15 }, (_, index) => {
+  const groups = [];
+  const existingPositions = [];
+
+  // Generate groups with minimum spacing
+  Array.from({ length: 15 }).forEach((_, index) => {
     const domainIndex = index % DOMAINS.length;
-    return generateBaseNodeGroup(DOMAINS[domainIndex], index);
+    const position = getRandomPositionWithPadding(existingPositions, 50);
+    existingPositions.push(position);
+
+    const group = generateBaseNodeGroup(DOMAINS[domainIndex], index, position);
+    groups.push(group);
   });
 
-  // Then add inter-group connections
+  // Add inter-group connections
   const interGroupConnections = [];
   
   groups.forEach((group, groupIndex) => {
-    // Each group will connect to 1-3 other groups
     const connectionCount = Math.floor(Math.random() * 7) + 3;
     
     for (let i = 0; i < connectionCount; i++) {
-      // Find a target group (not self)
       let targetGroupIndex;
       do {
         targetGroupIndex = Math.floor(Math.random() * groups.length);
@@ -62,7 +103,6 @@ function generateNodeGroups() {
 
       const targetGroup = groups[targetGroupIndex];
 
-      // Select random nodes from each group for connection
       const sourceNode = group.nodes[Math.floor(Math.random() * group.nodes.length)];
       const targetNode = targetGroup.nodes[Math.floor(Math.random() * targetGroup.nodes.length)];
 
@@ -81,13 +121,7 @@ function generateNodeGroups() {
   };
 }
 
-function generateBaseNodeGroup(domain, index) {
-  const position = [
-    getRandomPosition(100),  // Reduced from 150
-    getRandomPosition(100),  // Reduced from 150
-    getRandomPosition(200)   // Reduced from 300
-  ];
-
+function generateBaseNodeGroup(domain, index, position) {
   const nodeCount = Math.floor(Math.random() * 10) + 5;
   const radius = Math.max(4, Math.min(12, Math.cbrt(nodeCount)));
   
@@ -97,7 +131,7 @@ function generateBaseNodeGroup(domain, index) {
   for (let i = 0; i < nodeCount; i++) {
     const theta = Math.random() * Math.PI * 2;
     const phi = Math.acos(2 * Math.random() - 1);
-    const r = (radius * 0.4) + (Math.random() * radius * 0.6);  // Ensures nodes aren't too close to center
+    const r = (radius * 0.4) + (Math.random() * radius * 0.6);
 
     const nodePosition = [
       r * Math.sin(phi) * Math.cos(theta),
@@ -115,7 +149,6 @@ function generateBaseNodeGroup(domain, index) {
       color: Math.random() < 0.8 ? COLORS.primary : COLORS.secondary
     });
 
-    // Internal connections (2-8)
     const connectionCount = Math.floor(Math.random() * 7) + 2;
     for (let j = 0; j < connectionCount; j++) {
       if (nodes.length > 1) {

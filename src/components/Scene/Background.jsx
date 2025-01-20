@@ -3,66 +3,32 @@ import { useFrame } from '@react-three/fiber'
 import * as THREE from 'three'
 
 export default function Background() {
-  const particlesCount = 4000  // Increased particle count
+  // More particles for a denser star field
+  const particlesCount = 5000
   
   const positions = useMemo(() => {
     const positions = new Float32Array(particlesCount * 3)
     
+    // Distribute particles in a larger volume
     for (let i = 0; i < particlesCount; i++) {
-      // Much wider spread to match your scene scale
-      positions[i * 3] = (Math.random() - 0.5) * 500     // x: increased spread
-      positions[i * 3 + 1] = (Math.random() - 0.5) * 500  // y: increased spread
-      positions[i * 3 + 2] = (Math.random() - 0.5) * 500  // z: increased spread
+      positions[i * 3] = (Math.random() - 0.5) * 1000     // Wider spread on X
+      positions[i * 3 + 1] = (Math.random() - 0.5) * 1000 // Wider spread on Y
+      positions[i * 3 + 2] = (Math.random() - 0.5) * 1000 // Deeper spread on Z
     }
     
     return positions
   }, [])
   
-  const particlesMaterial = useMemo(() => new THREE.ShaderMaterial({
-    uniforms: {
-      time: { value: 0 },
-    },
-    vertexShader: `
-      uniform float time;
-      varying float vDistance;
-      varying float vAlpha;
-      
-      void main() {
-        vec3 pos = position;
-        
-        // Adjusted distance calculation for larger scene
-        vDistance = length(position.xyz) * 0.005;  // Reduced factor for larger scale
-        
-        // Smoother fade out
-        vAlpha = smoothstep(1.0, 0.0, vDistance);
-        
-        gl_Position = projectionMatrix * modelViewMatrix * vec4(pos, 1.0);
-        gl_PointSize = 1.5;  // Slightly larger particles
-      }
-    `,
-    fragmentShader: `
-      varying float vDistance;
-      varying float vAlpha;
-      
-      void main() {
-        // Softer particles
-        float strength = 0.12 / (vDistance + 0.3);
-        strength = smoothstep(0.0, 1.0, strength);
-        
-        // Slightly more visible particles
-        float alpha = strength * vAlpha * 0.08;
-        
-        gl_FragColor = vec4(1.0, 1.0, 1.0, alpha);
-      }
-    `,
+  // Simpler material for star-like points
+  const particlesMaterial = useMemo(() => new THREE.PointsMaterial({
+    size: 1.5,                  // Small point size
+    sizeAttenuation: true,      // Size changes with distance
+    color: new THREE.Color(1, 1, 1),
     transparent: true,
+    opacity: 0.6,               // Slightly transparent
     blending: THREE.AdditiveBlending,
-    depthWrite: false
+    depthWrite: false,
   }), [])
-  
-  useFrame((state) => {
-    particlesMaterial.uniforms.time.value = state.clock.elapsedTime * 0.05  // Slower animation
-  })
   
   return (
     <points>

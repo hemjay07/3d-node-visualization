@@ -46,7 +46,7 @@ export function CameraController() {
     const endPos = new THREE.Vector3(
       center.x,
       center.y,
-      center.z + 20
+      center.z + 25
     );
 
     // Kill any existing animations
