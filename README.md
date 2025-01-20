@@ -1,4 +1,4 @@
-# 🌌 Node Universe Explorer
+# 🌌 3d-node-visualization
 
 > A sophisticated 3D visualization system demonstrating advanced web graphics and animation capabilities. Built with React Three Fiber, Three.js, and GSAP.
 
