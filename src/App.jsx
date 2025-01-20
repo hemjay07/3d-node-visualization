@@ -7,6 +7,7 @@ import Scene from './components/Scene/Index'
 import { Search } from './components/UI/Search'
 import { DebugInfo, DebugOverlay } from './components/Debug'
 import { UNIVERSE_DATA } from './data'
+import * as THREE from 'three'
 
 function App() {
   const [debugInfo, setDebugInfo] = useState({
@@ -27,48 +28,44 @@ function App() {
       </div>
       
       <Canvas
- className="w-full h-full"
- camera={{ 
-   position: [0, 0, 200],
-   fov: 45,
-   near: 0.1,
-   far: 5000
- }}
->
+        className="w-full h-full"
+        camera={{ 
+          position: [0, 0, 50],
+          fov: 40,
+          near: 0.1,
+          far: 5000
+        }}
+      >
         <DebugInfo onDebugUpdate={setDebugInfo} />
         <Scene />
-        // In App.jsx
-<OrbitControls 
-  makeDefault  
-  enableDamping
-  dampingFactor={0.05}
-  rotateSpeed={0.5}
-  zoomSpeed={1}
-  panSpeed={1}
-  screenSpacePanning={true}
-  zoomToCursor={true}
-  minDistance={0.1}
-  maxDistance={1000}
-  
-  // Add rotation constraints
-  minPolarAngle={Math.PI * 0.1}     // Prevent looking directly from below
-  maxPolarAngle={Math.PI * 0.85}    // Prevent looking directly from above
-  
-  // Limit horizontal rotation range
-  minAzimuthAngle={-Math.PI * 0.75}  // Limit left rotation
-  maxAzimuthAngle={Math.PI * 0.75}   // Limit right rotation
-  
-  // Additional helpful settings
-  enableRotate={true}
+        <OrbitControls 
+          makeDefault  
+          enableDamping
+          dampingFactor={0.05}
+          rotateSpeed={0.5}
+          zoomSpeed={1}
+          panSpeed={1}
+          screenSpacePanning={false}  // Changed to false for better depth control
+          zoomToCursor={false}        // Changed to false for better depth navigation
+          minDistance={0.1}
+          maxDistance={1000}
+          
+          // Rotation constraints
+          minPolarAngle={Math.PI * 0.1}     // Prevent looking directly from below
+          maxPolarAngle={Math.PI * 0.85}    // Prevent looking directly from above
+          minAzimuthAngle={-Math.PI * 0.75}  // Limit left rotation
+          maxAzimuthAngle={Math.PI * 0.75}   // Limit right rotation
+          
+          enableRotate={true}
+          enableRotatePolarFix={true}
 
-  
-  // Auto-rotation when idle (optional)
-  // autoRotate={true}
-  // autoRotateSpeed={0.5}
-  
-  // Keep camera level with horizon
-  enableRotatePolarFix={true}
-/>
+          // Mouse button mappings for better depth control
+          mouseButtons={{
+            LEFT: THREE.MOUSE.ROTATE,
+            MIDDLE: THREE.MOUSE.PAN,
+            RIGHT: THREE.MOUSE.DOLLY
+          }}
+        />
         <EffectComposer>
           <Bloom 
             intensity={0.7}

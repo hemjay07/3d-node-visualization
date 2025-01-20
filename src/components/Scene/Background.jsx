@@ -3,16 +3,16 @@ import { useFrame } from '@react-three/fiber'
 import * as THREE from 'three'
 
 export default function Background() {
-  const particlesCount = 2000  // More particles for smoother effect
+  const particlesCount = 4000  // Increased particle count
   
   const positions = useMemo(() => {
     const positions = new Float32Array(particlesCount * 3)
     
     for (let i = 0; i < particlesCount; i++) {
-      // Spread particles more evenly and wider
-      positions[i * 3] = (Math.random() - 0.5) * 150    // x
-      positions[i * 3 + 1] = (Math.random() - 0.5) * 150  // y
-      positions[i * 3 + 2] = (Math.random() - 0.5) * 100  // z
+      // Much wider spread to match your scene scale
+      positions[i * 3] = (Math.random() - 0.5) * 500     // x: increased spread
+      positions[i * 3 + 1] = (Math.random() - 0.5) * 500  // y: increased spread
+      positions[i * 3 + 2] = (Math.random() - 0.5) * 500  // z: increased spread
     }
     
     return positions
@@ -30,14 +30,14 @@ export default function Background() {
       void main() {
         vec3 pos = position;
         
-        // Calculate distance from center for fade effect
-        vDistance = length(position.xyz) * 0.02;
+        // Adjusted distance calculation for larger scene
+        vDistance = length(position.xyz) * 0.005;  // Reduced factor for larger scale
         
-        // Fade out based on distance from center
+        // Smoother fade out
         vAlpha = smoothstep(1.0, 0.0, vDistance);
         
         gl_Position = projectionMatrix * modelViewMatrix * vec4(pos, 1.0);
-        gl_PointSize = 1.2;
+        gl_PointSize = 1.5;  // Slightly larger particles
       }
     `,
     fragmentShader: `
@@ -45,12 +45,12 @@ export default function Background() {
       varying float vAlpha;
       
       void main() {
-        // Create soft, circular particles
-        float strength = 0.15 / (vDistance + 0.5);
+        // Softer particles
+        float strength = 0.12 / (vDistance + 0.3);
         strength = smoothstep(0.0, 1.0, strength);
         
-        // Combine with distance-based fade
-        float alpha = strength * vAlpha * 0.05;
+        // Slightly more visible particles
+        float alpha = strength * vAlpha * 0.08;
         
         gl_FragColor = vec4(1.0, 1.0, 1.0, alpha);
       }
@@ -61,7 +61,7 @@ export default function Background() {
   }), [])
   
   useFrame((state) => {
-    particlesMaterial.uniforms.time.value = state.clock.elapsedTime * 0.1
+    particlesMaterial.uniforms.time.value = state.clock.elapsedTime * 0.05  // Slower animation
   })
   
   return (
