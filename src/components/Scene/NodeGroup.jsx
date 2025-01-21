@@ -25,7 +25,7 @@ export default function NodeGroup({ data, position }) {
 
   useEffect(() => {
     const radius = 6.0;
-    const speed = 0.01;
+    const speed = 0.003;
 
     const interval = setInterval(() => {
       setAnimatedNodes((prevNodes) =>
