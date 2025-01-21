@@ -26,7 +26,7 @@ function generateNodeGroup(domain, index) {
   const position = getRandomPositionWithPadding(existingPositions, 50);
   // Enforce minimum inter-group distance
   const nodeCount = Math.floor(Math.random() * 10) + 5;
-  const radius = Math.max(4, Math.min(12, Math.cbrt(nodeCount)));
+  const radius = Math.max(4, Math.min(12, Math.cbrt(nodeCount)))
 
   // 3D spherical distribution for nodes
   const theta = Math.random() * Math.PI * 2;
