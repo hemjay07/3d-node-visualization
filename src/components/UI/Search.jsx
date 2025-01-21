@@ -1,4 +1,3 @@
-// components/UI/Search.jsx
 import { useState, useEffect, useRef } from 'react'
 import { useSearchStore } from '../../stores/searchStore'
 
@@ -36,19 +35,17 @@ export function Search({ nodeGroups }) {
     setIsOpen(true)
   }
 
-  // Handle keyboard navigation
   const handleKeyDown = (e) => {
     if (e.key === 'Enter' && searchResults.length > 0) {
       handleSelect(searchResults[0])
     }
   }
 
-  // Handle group selection
   const handleSelect = (group) => {
     setSearchQuery('') // Reset search query
     setSearchResults([])
     setIsOpen(false)
-    setSelectedNodeGroup(group) // This will trigger even if it's the same group
+    setSelectedNodeGroup(group) 
   }
 
   useEffect(() => {

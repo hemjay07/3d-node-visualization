@@ -1,4 +1,3 @@
-// src/data.js
 const DOMAINS = [
   {
     name: 'analytics',
@@ -38,6 +37,8 @@ function getRandomPosition(range) {
   return Math.random() * range - range / 2;
 }
 
+
+// Get a random position, check if its valid by comparing its distance with every other registered position.
 function getRandomPositionWithPadding(existingPositions, minDistance = 50) {
   let position;
   let isValidPosition = false;

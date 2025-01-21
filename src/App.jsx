@@ -10,9 +10,8 @@ import { IntroAnimation } from './IntroAnimation'
 function App() {
   const [showSearch, setShowSearch] = useState(false);
 
-  // Show search after intro animation
   useEffect(() => {
-    const timer = setTimeout(() => setShowSearch(true), 9000); // 9 seconds for the whole animation
+    const timer = setTimeout(() => setShowSearch(true), 9000); 
     return () => clearTimeout(timer);
   }, []);
   
@@ -34,7 +33,7 @@ function App() {
       <Canvas
         className="w-full h-full"
         camera={{ 
-          position: [0, 0, 1000], // Start far out
+          position: [0, 0, 1000], // Start far out, this is for the initial animation effect
           fov: 45,
           near: 0.1,
           far: 5000

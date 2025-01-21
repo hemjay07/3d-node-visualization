@@ -1,4 +1,3 @@
-// stores/nodePositionsStore.js
 import { create } from 'zustand'
 
 export const useNodePositionsStore = create((set) => ({

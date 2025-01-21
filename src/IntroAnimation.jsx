@@ -1,4 +1,3 @@
-// IntroAnimation.jsx
 import { useEffect } from 'react';
 import { useThree } from '@react-three/fiber';
 import gsap from 'gsap';
@@ -9,7 +8,6 @@ export function IntroAnimation() {
   useEffect(() => {
     if (!camera || !controls) return;
 
-    // Disable controls during animation
     controls.enabled = false;
 
     // Set initial position
