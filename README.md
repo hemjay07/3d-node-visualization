@@ -2,9 +2,18 @@
 
 > A sophisticated 3D visualization system demonstrating advanced web graphics and animation capabilities. Built with React Three Fiber, Three.js, and GSAP.
 
----
-
 Live site: https://3d-node-visualization.vercel.app/
+
+## 🌐 Visualization System Overview
+
+- **Node Groups**: Interconnected with thicker lines, while maintaining thinner connections to other node groups.
+- **3D Universe**: Randomly arranged node groups in a universe featuring particles representing stars.
+- **Camera Exploration**: Move freely to explore node groups with smooth and context-aware transitions.
+- **Search Functionality**: Advanced search allows quick navigation to a particular node group.
+
+
+
+
 
 ## 🌟 Core Technical Achievements
 
