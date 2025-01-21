@@ -3,6 +3,7 @@
 > A sophisticated 3D visualization system demonstrating advanced web graphics and animation capabilities. Built with React Three Fiber, Three.js, and GSAP.
 
 Live site: https://3d-node-visualization.vercel.app/
+![Uploading 3d-visualization-demo-ezgif.com-video-to-gif-converter.gif…]()
 
 ## 🌐 Visualization System Overview
 
