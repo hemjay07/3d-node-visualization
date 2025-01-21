@@ -1,46 +1,41 @@
 import { useMemo } from 'react'
-import { useFrame } from '@react-three/fiber'
 import * as THREE from 'three'
 
+// Create material once for all instances
+const particleMaterial = new THREE.PointsMaterial({
+  size: 1.5,
+  sizeAttenuation: true,
+  color: new THREE.Color(1, 1, 1),
+  transparent: true,
+  opacity: 0.6,
+  blending: THREE.AdditiveBlending,
+  depthWrite: false,
+});
+
 export default function Background() {
-  //Particles for a dense star field
-  const particlesCount = 5000
+  const particlesCount = 3000 // Reduced from 5000
   
+  // Create positions once and reuse them
   const positions = useMemo(() => {
-    const positions = new Float32Array(particlesCount * 3)
-    
-    // Distribution of particles
+    const pos = new Float32Array(particlesCount * 3)
     for (let i = 0; i < particlesCount; i++) {
-      positions[i * 3] = (Math.random() - 0.5) * 1000     
-      positions[i * 3 + 1] = (Math.random() - 0.5) * 1000 
-      positions[i * 3 + 2] = (Math.random() - 0.5) * 1000 
+      pos[i * 3] = (Math.random() - 0.5) * 800     // Slightly reduced spread
+      pos[i * 3 + 1] = (Math.random() - 0.5) * 800
+      pos[i * 3 + 2] = (Math.random() - 0.5) * 800
     }
-    
-    return positions
+    return pos
   }, [])
-  
-  // material for star-like points
-  const particlesMaterial = useMemo(() => new THREE.PointsMaterial({
-    size: 1.5,                
-    sizeAttenuation: true,      
-    color: new THREE.Color(1, 1, 1),
-    transparent: true,
-    opacity: 0.6,               
-    blending: THREE.AdditiveBlending,
-    depthWrite: false,
-  }), [])
-  
+
+  // Create geometry once with positions
+  const geometry = useMemo(() => {
+    const geo = new THREE.BufferGeometry()
+    geo.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3))
+    // Add bounding sphere for frustum culling
+    geo.computeBoundingSphere()
+    return geo
+  }, [positions])
+
   return (
-    <points>
-      <bufferGeometry>
-        <bufferAttribute
-          attach="attributes-position"
-          count={particlesCount}
-          array={positions}
-          itemSize={3}
-        />
-      </bufferGeometry>
-      <primitive object={particlesMaterial} attach="material" />
-    </points>
+    <points geometry={geometry} material={particleMaterial} frustumCulled={true} />
   )
 }

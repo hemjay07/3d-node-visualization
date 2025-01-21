@@ -1,8 +1,32 @@
-import { useNodePositionsStore } from '../../stores/nodePositionsStore'
-import * as THREE from 'three'
+import { useRef, useMemo } from 'react';
+import * as THREE from 'three';
+import { useNodePositionsStore } from '../../stores/nodePositionsStore';
 
+// Shared geometries and materials
+const sphereGeometry = new THREE.SphereGeometry(0.02, 8, 8);
 
-export default function InterGroupConnection ({ sourceGroup, targetGroup, sourceNodeId, targetNodeId }) {
+const baseLineMaterial = new THREE.LineBasicMaterial({
+  color: "#ffffff",
+  transparent: true,
+  opacity: 0.015,
+  depthWrite: false
+});
+
+const glowLineMaterial = new THREE.LineBasicMaterial({
+  color: "#4dffff",
+  transparent: true,
+  opacity: 0.01,
+  depthWrite: false
+});
+
+const endpointMaterial = new THREE.MeshBasicMaterial({
+  color: "#4dffff",
+  transparent: true,
+  opacity: 0.03,
+  depthWrite: false
+});
+
+export default function InterGroupConnection({ sourceGroup, targetGroup, sourceNodeId, targetNodeId }) {
   const animatedPositions = useNodePositionsStore(state => state.animatedPositions);
   
   const sourceNode = sourceGroup.nodes.find(n => n.id === sourceNodeId);
@@ -10,7 +34,7 @@ export default function InterGroupConnection ({ sourceGroup, targetGroup, source
 
   if (!sourceNode || !targetNode) return null;
 
-  // Get animated positions from store, fall back to static positions if not available
+  // Get animated positions or fall back to static positions
   const sourceAnimatedPos = animatedPositions.get(`${sourceGroup.id}-${sourceNodeId}`);
   const targetAnimatedPos = animatedPositions.get(`${targetGroup.id}-${targetNodeId}`);
 
@@ -26,57 +50,33 @@ export default function InterGroupConnection ({ sourceGroup, targetGroup, source
     targetGroup.position[2] + targetNode.position[2]
   ];
 
-  const points = [
-    new THREE.Vector3(...sourcePos),
-    new THREE.Vector3(...targetPos)
-  ];
+  // Create and update geometry
+  const lineGeometry = useMemo(() => {
+    const geometry = new THREE.BufferGeometry();
+    const positions = new Float32Array(2 * 3);
+    geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+    return geometry;
+  }, []);
 
-  const lineGeometry = new THREE.BufferGeometry().setFromPoints(points);
- 
+  // Update positions
+  useMemo(() => {
+    const positions = lineGeometry.attributes.position.array;
+    positions[0] = sourcePos[0];
+    positions[1] = sourcePos[1];
+    positions[2] = sourcePos[2];
+    positions[3] = targetPos[0];
+    positions[4] = targetPos[1];
+    positions[5] = targetPos[2];
+    lineGeometry.attributes.position.needsUpdate = true;
+  }, [sourcePos, targetPos]);
+
   return (
     <group>
-      {/* Very faint base line */}
-      <line geometry={lineGeometry}>
-        <lineBasicMaterial 
-          color="#ffffff" 
-          transparent 
-          opacity={0.02} 
-          linewidth={1}
-          depthWrite={false}
-        />
-      </line>
-
-      {/* Minimal glow */}
-      <line geometry={lineGeometry}>
-        <lineBasicMaterial 
-          color="#4dffff" 
-          transparent 
-          opacity={0.01} 
-          linewidth={1}
-          depthWrite={false}
-        />
-      </line>
-
-      {/* Subtle endpoints */}
-      <mesh position={new THREE.Vector3(...sourcePos)}>
-        <sphereGeometry args={[0.03, 8, 8]} />
-        <meshBasicMaterial 
-          color="#4dffff" 
-          transparent 
-          opacity={0.05}
-          depthWrite={false}
-        />
-      </mesh>
-
-      <mesh position={new THREE.Vector3(...targetPos)}>
-        <sphereGeometry args={[0.03, 8, 8]} />
-        <meshBasicMaterial 
-          color="#4dffff" 
-          transparent 
-          opacity={0.05}
-          depthWrite={false}
-        />
-      </mesh>
+      <line geometry={lineGeometry} material={baseLineMaterial} />
+      <line geometry={lineGeometry} material={glowLineMaterial} />
+      
+      <mesh position={sourcePos} geometry={sphereGeometry} material={endpointMaterial} />
+      <mesh position={targetPos} geometry={sphereGeometry} material={endpointMaterial} />
     </group>
   );
-};
+}

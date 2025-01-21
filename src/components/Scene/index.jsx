@@ -5,7 +5,7 @@ import { CameraController } from './CameraController'
 import { UNIVERSE_DATA } from '../../data'
 import { useSearchStore } from '../../stores/searchStore'
 import InterGroupConnection from './InterGroupConnection'
-
+// import PerformanceMonitor from './PerformanceMonitor'
 
 export default function Scene() {
   // console.log("scene rendered")
@@ -15,6 +15,7 @@ export default function Scene() {
 
   return (
     <group ref={sceneRef}>
+      {/* <PerformanceMonitor/> */}
       <CameraController />
       <Background />
       

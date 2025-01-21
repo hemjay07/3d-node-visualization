@@ -6,7 +6,7 @@ import Connection from './Connection';
 
 const GroupLabel = ({ label }) => (
   <Html position={[0, 0, -1]} center>
-    <div className="px-3 py-1 text-sm text-black bg-white/50 rounded-sm whitespace-nowrap">
+    <div className="px-3 py-1 text-lg text-black bg-white/50 rounded-sm whitespace-nowrap">
       {label}
     </div>
   </Html>
