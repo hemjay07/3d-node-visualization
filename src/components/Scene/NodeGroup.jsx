@@ -30,12 +30,16 @@ export default function NodeGroup({ data, position }) {
     const interval = setInterval(() => {
       setAnimatedNodes((prevNodes) =>
         prevNodes.map((node) => {
+          // Calculate new position in circular motion
+
           const newAngle = node.angle + speed;
           const newX = node.originalPosition[0] + radius * Math.cos(newAngle);
           const newY = node.originalPosition[1] + radius * Math.sin(newAngle);
           const newPosition = [newX, newY, node.originalPosition[2]];
           
-          // Update global position store with world position
+
+        // Update global position store (for inter-group connections)
+
           updateNodePosition(
             data.id, 
             node.id, 
@@ -53,7 +57,7 @@ export default function NodeGroup({ data, position }) {
           };
         })
       );
-    }, 16);
+    }, 16); // ~60fps
 
     return () => clearInterval(interval);
   }, [data.id, position, updateNodePosition]);
@@ -83,9 +87,9 @@ export default function NodeGroup({ data, position }) {
           position={node.position}
           label={node.id}
           color={node.color}
-          isSelected={data.selectedNode?.id === node.id}
         />
       ))}
     </group>
   );
 }
+

@@ -42,7 +42,7 @@ export function Search({ nodeGroups }) {
   }
 
   const handleSelect = (group) => {
-    setSearchQuery('') // Reset search query
+    setSearchQuery('') 
     setSearchResults([])
     setIsOpen(false)
     setSelectedNodeGroup(group) 

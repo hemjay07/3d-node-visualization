@@ -33,8 +33,8 @@ function App() {
       <Canvas
         className="w-full h-full"
         camera={{ 
-          position: [0, 0, 1000], // Start far out, this is for the initial animation effect
-          fov: 45,
+          position: [0, 0, 1300], // Start far out, this is for the initial animation effect
+          fov: 55,
           near: 0.1,
           far: 5000
         }}
@@ -52,6 +52,7 @@ function App() {
           zoomToCursor={true}
           minDistance={0.1}
           maxDistance={1000}
+          // target={[0,0,-500]}
           
           minPolarAngle={Math.PI * 0.1}     
           maxPolarAngle={Math.PI * 0.85}    

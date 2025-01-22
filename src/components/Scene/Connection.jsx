@@ -1,58 +1,13 @@
-import { useRef, useMemo } from 'react';
+import { useMemo } from 'react';
 import * as THREE from 'three';
-
-// Shared geometries and materials for all connections
-const sphereGeometry = new THREE.SphereGeometry(0.05, 16, 16);
-
-// Multiple line materials for thickness effect
-const baseLineMaterials = [
-  new THREE.LineBasicMaterial({
-    color: "#ffffff",
-    transparent: true,
-    opacity: 0.4,
-    depthWrite: false
-  }),
-  new THREE.LineBasicMaterial({
-    color: "#ffffff",
-    transparent: true,
-    opacity: 0.3,
-    depthWrite: false
-  })
-];
-
-const glowLineMaterials = [
-  new THREE.LineBasicMaterial({
-    color: "#4dffff",
-    transparent: true,
-    opacity: 0.25,
-    depthWrite: false
-  }),
-  new THREE.LineBasicMaterial({
-    color: "#4dffff",
-    transparent: true,
-    opacity: 0.15,
-    depthWrite: false
-  })
-];
+import { geometries, materials, createLineGeometry, updateLinePositions } from '../../utils/three.utils';
 
 export default function Connection({ start, end, startColor, endColor }) {
-  const lineGeometry = useMemo(() => {
-    const geometry = new THREE.BufferGeometry();
-    const positions = new Float32Array(2 * 3);
-    geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
-    return geometry;
-  }, []);
+  const lineGeometry = useMemo(() => createLineGeometry(), []);
 
   // Update positions
   useMemo(() => {
-    const positions = lineGeometry.attributes.position.array;
-    positions[0] = start[0];
-    positions[1] = start[1];
-    positions[2] = start[2];
-    positions[3] = end[0];
-    positions[4] = end[1];
-    positions[5] = end[2];
-    lineGeometry.attributes.position.needsUpdate = true;
+    updateLinePositions(lineGeometry, start, end);
   }, [start, end]);
 
   // Node materials
@@ -71,7 +26,7 @@ export default function Connection({ start, end, startColor, endColor }) {
   return (
     <group>
       {/* Base white lines with offset for thickness */}
-      {baseLineMaterials.map((material, i) => (
+      {materials.connectionBaseLines.map((material, i) => (
         <line 
           key={`base-${i}`}
           geometry={lineGeometry} 
@@ -81,7 +36,7 @@ export default function Connection({ start, end, startColor, endColor }) {
       ))}
 
       {/* Glow cyan lines */}
-      {glowLineMaterials.map((material, i) => (
+      {materials.connectionGlowLines.map((material, i) => (
         <line 
           key={`glow-${i}`}
           geometry={lineGeometry} 
@@ -91,8 +46,8 @@ export default function Connection({ start, end, startColor, endColor }) {
       ))}
 
       {/* Connection endpoints */}
-      <mesh position={start} geometry={sphereGeometry} material={startMaterial} />
-      <mesh position={end} geometry={sphereGeometry} material={endMaterial} />
+      <mesh position={start} geometry={geometries.connectionSphere} material={startMaterial} />
+      <mesh position={end} geometry={geometries.connectionSphere} material={endMaterial} />
     </group>
   );
 }

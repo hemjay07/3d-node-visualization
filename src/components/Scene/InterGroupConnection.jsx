@@ -1,30 +1,6 @@
-import { useRef, useMemo } from 'react';
-import * as THREE from 'three';
+import { useMemo } from 'react';
 import { useNodePositionsStore } from '../../stores/nodePositionsStore';
-
-// Shared geometries and materials
-const sphereGeometry = new THREE.SphereGeometry(0.02, 8, 8);
-
-const baseLineMaterial = new THREE.LineBasicMaterial({
-  color: "#ffffff",
-  transparent: true,
-  opacity: 0.015,
-  depthWrite: false
-});
-
-const glowLineMaterial = new THREE.LineBasicMaterial({
-  color: "#4dffff",
-  transparent: true,
-  opacity: 0.01,
-  depthWrite: false
-});
-
-const endpointMaterial = new THREE.MeshBasicMaterial({
-  color: "#4dffff",
-  transparent: true,
-  opacity: 0.03,
-  depthWrite: false
-});
+import { materials, createLineGeometry, updateLinePositions } from '../../utils/three.utils';
 
 export default function InterGroupConnection({ sourceGroup, targetGroup, sourceNodeId, targetNodeId }) {
   const animatedPositions = useNodePositionsStore(state => state.animatedPositions);
@@ -51,32 +27,17 @@ export default function InterGroupConnection({ sourceGroup, targetGroup, sourceN
   ];
 
   // Create and update geometry
-  const lineGeometry = useMemo(() => {
-    const geometry = new THREE.BufferGeometry();
-    const positions = new Float32Array(2 * 3);
-    geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
-    return geometry;
-  }, []);
+  const lineGeometry = useMemo(() => createLineGeometry(), []);
 
   // Update positions
   useMemo(() => {
-    const positions = lineGeometry.attributes.position.array;
-    positions[0] = sourcePos[0];
-    positions[1] = sourcePos[1];
-    positions[2] = sourcePos[2];
-    positions[3] = targetPos[0];
-    positions[4] = targetPos[1];
-    positions[5] = targetPos[2];
-    lineGeometry.attributes.position.needsUpdate = true;
+    updateLinePositions(lineGeometry, sourcePos, targetPos);
   }, [sourcePos, targetPos]);
 
   return (
     <group>
-      <line geometry={lineGeometry} material={baseLineMaterial} />
-      <line geometry={lineGeometry} material={glowLineMaterial} />
-      
-      <mesh position={sourcePos} geometry={sphereGeometry} material={endpointMaterial} />
-      <mesh position={targetPos} geometry={sphereGeometry} material={endpointMaterial} />
+      <line geometry={lineGeometry} material={materials.interGroupBase} />
+      <line geometry={lineGeometry} material={materials.interGroupGlow} />
     </group>
   );
 }

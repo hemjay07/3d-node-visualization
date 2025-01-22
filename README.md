@@ -168,7 +168,6 @@ npm run dev
 1. **Camera Zooming**: Implemented dynamic target adjustment to prevent zoom limitations while maintaining smooth transitions.  
 2. **Node Distribution**: Developed custom algorithms for optimal 3D space utilization.  
 3. **Performance Optimization**: Achieved 60fps with 1000+ particles and complex node relationships.  
-4. **Shader Implementation**: Created custom WebGL shaders for particle effects.  
 
 ---
 

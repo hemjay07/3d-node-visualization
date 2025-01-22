@@ -21,6 +21,7 @@ export default function Scene() {
       
       {/* Scene content in nested groups for better organization */}
       <group>
+
         {/* Connections group */}
         <group>
           {UNIVERSE_DATA.interGroupConnections.map((connection, idx) => {
@@ -50,6 +51,7 @@ export default function Scene() {
             />
           ))}
         </group>
+        
       </group>
     </group>
   )

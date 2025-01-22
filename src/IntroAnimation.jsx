@@ -9,9 +9,6 @@ export function IntroAnimation() {
     if (!camera || !controls) return;
 
     controls.enabled = false;
-
-    // Set initial position
-    camera.position.set(0, 0, 1300);
     
     const tl = gsap.timeline({
       onComplete: () => {
